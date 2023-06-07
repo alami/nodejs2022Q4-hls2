@@ -10,11 +10,11 @@ services:
     networks:
       - my_network
     ports:
-      - ${PORT}:${PORT}
+      - ${HTTPPORT}:${HTTPPORT}
     depends_on:
       - postgres
     environment:
-      - PORT=${PORT}
+      - PORT=${HTTPPORT}
     volumes:
       - ./:/nodejs2022q4/app/src
   postgres:

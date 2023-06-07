@@ -23,6 +23,7 @@ export class ArtistService {
       grammy,
       name,
     } as Artist;
+
     this.db.artists.push(newArtist);
     return newArtist;
   }

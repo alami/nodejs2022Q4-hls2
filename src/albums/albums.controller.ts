@@ -46,8 +46,8 @@ export class AlbumsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createAlbum(@Body(new ValidationPipe()) createAlbumDto: AlbumsDto) {
-    const album = this.albumsService.create(createAlbumDto);
+  async createAlbum(@Body(new ValidationPipe()) createAlbumDto: AlbumsDto) {
+    const album =await this.albumsService.create(createAlbumDto);
     if (!album) {
       throw new NotFoundException();
     }

@@ -8,15 +8,15 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const PORT = configService.get<number>('PORT') || 4000;
+  const HTTPPORT = configService.get<number>('HTTPPORT') || 4000;
   const document: any = yaml.load(
     await readFile('./doc/api.yaml', { encoding: 'utf-8' }),
   );
   SwaggerModule.setup('api', app, document);
 
   setTimeout(() => {
-    console.log(`http://localhost:${PORT} started`);
+    console.log(`http://localhost:${HTTPPORT} started`);
   }, 2000);
-  await app.listen(PORT);
+  await app.listen(HTTPPORT);
 }
 bootstrap();

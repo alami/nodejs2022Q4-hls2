@@ -46,9 +46,9 @@ export class ArtistsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createartist(@Body(new ValidationPipe()) createartistDto: ArtistDto) {
-    const art = this.artistsService.create(createartistDto);
-    if (art === undefined) {
+  async createartist(@Body(new ValidationPipe()) createartistDto: ArtistDto) {
+    const art = await this.artistsService.create(createartistDto);
+    if (!art) {
       throw new NotFoundException();
     }
     return art;

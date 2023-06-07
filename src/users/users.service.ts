@@ -5,16 +5,24 @@ import { User } from '../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { DbService } from '../models/db.service';
 import { Inject } from '@nestjs/common/decorators';
+import {UsersEntity} from "./entities/users.entity";
+import {Repository} from "typeorm";
+import {InjectRepository} from "@nestjs/typeorm";
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject(DbService) private db: DbService) {}
+  constructor(
+      @Inject(DbService) private db: DbService,
+      @InjectRepository(UsersEntity)
+      private usersRepository: Repository<UsersEntity>,
+  ) {}
 
-  getAll() {
-    return this.db.users.map((el) => {
-      const { password, ...res } = el;
-      return res;
-    });
+  async getAll() {
+    // return this.db.users.map((el) => {
+    //   const { password, ...res } = el;
+    //   return res;
+    // });
+    return this.usersRepository.find()
   }
 
   getOneById(id: string) {
