@@ -17,6 +17,7 @@ services:
       - PORT=${HTTPPORT}
     volumes:
       - ./:/nodejs2022q4/app/src
+      - /nodejs2022q4/app/src/node_modules
   postgres:
     build: ./postgres/
     image: nodejs2022q4_postgres

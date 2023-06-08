@@ -29,6 +29,7 @@ import {UsersEntity} from "./users/entities/users.entity";
       database: 'hls_postgres',
       entities: [UsersEntity],
       synchronize: true,
+      autoLoadEntities: true,
     }),
   ],
   controllers: [AppController],
