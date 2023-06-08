@@ -5,20 +5,20 @@ import { User } from '../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { DbService } from '../models/db.service';
 import { Inject } from '@nestjs/common/decorators';
-import {UsersEntity} from "./entities/users.entity";
-import {Repository} from "typeorm";
-import {InjectRepository} from "@nestjs/typeorm";
+import { UsersEntity } from './entities/users.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
-      @Inject(DbService) private db: DbService,
-      @InjectRepository(UsersEntity)
-      private usersRepository: Repository<UsersEntity>,
+    @Inject(DbService) private db: DbService,
+    @InjectRepository(UsersEntity)
+    private usersRepository: Repository<UsersEntity>,
   ) {}
 
   async getAll() {
-    return this.usersRepository.find()
+    return this.usersRepository.find();
   }
 
   async getOneById(id: string) {

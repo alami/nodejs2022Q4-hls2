@@ -10,9 +10,9 @@ import { TracksEntity } from './entities/tracks.entity';
 @Injectable()
 export class TracksService {
   constructor(
-      @InjectRepository(TracksEntity)
-      private trackRepo: Repository<TracksEntity>,
-      @Inject(DbService) private db: DbService
+    @InjectRepository(TracksEntity)
+    private trackRepo: Repository<TracksEntity>,
+    @Inject(DbService) private db: DbService,
   ) {}
 
   getAll() {
@@ -20,7 +20,7 @@ export class TracksService {
   }
 
   getOneById(id: string) {
-    return this.trackRepo.findOne({where:{id}});
+    return this.trackRepo.findOne({ where: { id } });
   }
 
   async create(dto: TracksDto) {
@@ -30,16 +30,16 @@ export class TracksService {
   }
 
   async updateOne(id: string, dto: TracksDto) {
-    const track = await this.trackRepo.findOne({where:{id}});
+    const track = await this.trackRepo.findOne({ where: { id } });
     if (track === undefined) {
       return undefined;
     }
     const updTrack = { ...track, ...dto } as TracksEntity;
-    return this.trackRepo.save(updTrack)
+    return this.trackRepo.save(updTrack);
   }
 
   async deleteTrack(id: string) {
-    const track = await this.trackRepo.findOne({where:{id}});
+    const track = await this.trackRepo.findOne({ where: { id } });
     if (track === undefined) {
       return undefined;
     }

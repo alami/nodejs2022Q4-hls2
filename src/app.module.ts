@@ -8,8 +8,8 @@ import { AlbumsModule } from './albums/albums.module';
 import { TrackModule } from './track/track.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { DbModule } from './models/db.module';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {UsersEntity} from "./users/entities/users.entity";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersEntity } from './users/entities/users.entity';
 
 @Module({
   imports: [
