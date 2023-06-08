@@ -19,18 +19,10 @@ export class UsersService {
 
   async getAll() {
     return this.usersRepository.find()
-    /*return this.db.users.map((el) => {
-      const { password, ...res } = el;
-      return res;
-    });*/
   }
 
   async getOneById(id: string) {
     return this.usersRepository.findOneBy({ id });
-    /*const user = this.db.users
-      .map(({ password, ...res }) => res)
-      .find((el) => el.id === id);
-    return user;*/
   }
 
   async create(dto: CreateUserDto) {
@@ -45,18 +37,13 @@ export class UsersService {
     } as UsersEntity;
     const user = await this.usersRepository.create(newUser);
     return this.usersRepository.save(user);
-    /*this.db.users.push(newUser);
-    const { password, ...res } = newUser;
-    return res;*/
   }
 
   async updateOne(id: string, dto: UserUpdateDto) {
-    //const user = this.db.users.find((el) => el.id === id);
     const user = await this.usersRepository.findOneBy({ id });
     if (user === undefined) {
       return undefined;
     }
-    // const userIndex = this.db.users.findIndex((el) => el.id === id);
     if (user.password !== dto.oldPassword) {
       return 'password';
     }
@@ -68,21 +55,13 @@ export class UsersService {
       createdAt: user.createdAt,
       updatedAt: new Date().getTime().toString(),
     } as UsersEntity;
-    /*this.db.users.splice(userIndex, 1, updUser);
-    const { password, ...res } = updUser;
-    return res;*/
   }
 
   async deleteUser(id: string) {
-    // const user = this.db.users.find((el) => el.id === id);
     const user = await this.usersRepository.findOneBy({ id });
     if (user == undefined) {
       return undefined;
     }
     await this.usersRepository.delete(id);
-    /*const userIndex = this.db.users.findIndex((el) => el.id === id);
-    this.db.users.splice(userIndex, 1);
-    const { password, ...res } = user;
-    return res;*/
   }
 }

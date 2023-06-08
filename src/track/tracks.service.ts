@@ -3,65 +3,46 @@ import { TracksDto } from './dto/tracks.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { Track } from '../models/interfaces';
 import { DbService } from '../models/db.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TracksEntity } from './entities/tracks.entity';
 
 @Injectable()
 export class TracksService {
-  constructor(@Inject(DbService) private db: DbService) {}
+  constructor(
+      @InjectRepository(TracksEntity)
+      private trackRepo: Repository<TracksEntity>,
+      @Inject(DbService) private db: DbService
+  ) {}
 
   getAll() {
-    return this.db.tracks;
+    return this.trackRepo.find();
   }
 
   getOneById(id: string) {
-    const track = this.db.tracks.find((el) => el.id === id);
-    return track;
+    return this.trackRepo.findOne({where:{id}});
   }
 
-  create(dto: TracksDto) {
-    const newtrack = { ...dto } as Track;
-    newtrack.id = uuidv4();
-    const art = this.db.artists.find((el) => el.id === dto.artistId);
-    const album = this.db.albums.find((el) => el.id === dto.albumId);
-    if (album === undefined && dto.albumId !== null) {
-      return undefined;
-    }
-    if (art === undefined && dto.artistId !== null) {
-      return undefined;
-    }
-    this.db.tracks.push(newtrack);
-    return newtrack;
+  async create(dto: TracksDto) {
+    const newtrack = { id: uuidv4(), ...dto } as TracksEntity;
+    const track = this.trackRepo.create(newtrack);
+    return this.trackRepo.save(track);
   }
 
-  updateOne(id: string, dto: TracksDto) {
-    const track = this.db.tracks.find((el) => el.id === id);
-    const art = this.db.artists.find((el) => el.id === dto.artistId);
-    const album = this.db.albums.find((el) => el.id === dto.albumId);
-    if (album === undefined && dto.albumId !== null) {
-      return undefined;
-    }
-    if (art === undefined && dto.artistId !== null) {
-      return undefined;
-    }
+  async updateOne(id: string, dto: TracksDto) {
+    const track = await this.trackRepo.findOne({where:{id}});
     if (track === undefined) {
       return undefined;
     }
-    const trackIndex = this.db.tracks.findIndex((el) => el.id === id);
-    const updtrack = { ...track, ...dto } as Track;
-    this.db.tracks.splice(trackIndex, 1, updtrack);
-    return updtrack;
+    const updTrack = { ...track, ...dto } as TracksEntity;
+    return this.trackRepo.save(updTrack)
   }
 
-  deleteTrack(id: string) {
-    const track = this.db.tracks.find((el) => el.id === id);
+  async deleteTrack(id: string) {
+    const track = await this.trackRepo.findOne({where:{id}});
     if (track === undefined) {
       return undefined;
     }
-    const trackIndex = this.db.tracks.findIndex((el) => el.id === id);
-    this.db.tracks.splice(trackIndex, 1);
-    const ind = this.db.favorites.tracks.findIndex((el) => el.id === id);
-    if (ind !== -1) {
-      this.db.favorites.tracks.splice(ind, 1);
-    }
-    return track;
+    await this.trackRepo.delete(id);
   }
 }
