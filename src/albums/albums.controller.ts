@@ -21,13 +21,13 @@ export class AlbumsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getAlbums() {
-    return this.albumsService.getAll();
+  async getAlbums() {
+    return await this.albumsService.getAll();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getAlbum(
+  async getAlbum(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -37,7 +37,7 @@ export class AlbumsController {
     )
     id: string,
   ) {
-    const album = this.albumsService.getOneById(id);
+    const album = await this.albumsService.getOneById(id);
     if (!album) {
       throw new NotFoundException();
     }
@@ -56,7 +56,7 @@ export class AlbumsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  updateAlbum(
+  async updateAlbum(
     @Body(new ValidationPipe()) albumDto: AlbumsDto,
     @Param(
       'id',
@@ -67,8 +67,8 @@ export class AlbumsController {
     )
     id: string,
   ) {
-    const album = this.albumsService.updateOne(id, albumDto);
-    if (album === undefined) {
+    const album = await this.albumsService.updateOne(id, albumDto);
+    if (!album) {
       throw new NotFoundException();
     }
     return album;
@@ -76,7 +76,7 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(
+  async deleteAlbum(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -86,8 +86,8 @@ export class AlbumsController {
     )
     id: string,
   ) {
-    const album = this.albumsService.deleteAlbum(id);
-    if (album === undefined) {
+    const album = await this.albumsService.deleteAlbum(id);
+    if (!album) {
       throw new NotFoundException();
     }
     return album;

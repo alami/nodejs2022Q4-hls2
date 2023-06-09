@@ -1,26 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ArtistDto } from './dto/artist.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { Artist, Album, Track } from '../models/interfaces';
+import { Artist, Track } from '../models/interfaces';
 import { DbService } from '../models/db.service';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ArtistsEntity } from './entities/artists.entity';
+import { AlbumsEntity } from '../albums/entities/album.entity';
 
 @Injectable()
 export class ArtistService {
   constructor(
-      @InjectRepository(ArtistsEntity)
-      private artistRepo: Repository<ArtistsEntity>,
-      @Inject(DbService) private db: DbService
+    @Inject(DbService) private db: DbService,
   ) {}
 
-  getAll() {
-    return this.artistRepo.find();
+  async getAll() {
+    return await this.db.artists.find();
   }
 
-  getOneById(id: string) {
-    return this.artistRepo.findOne({where:{id}});
+  async getOneById(id: string) {
+    return await this.db.artists.findOne({where:{id}});
   }
 
   create({ grammy, name }: ArtistDto) {
@@ -29,24 +25,44 @@ export class ArtistService {
       grammy,
       name,
     } as Artist;
-    const artist = this.artistRepo.create(newArtist);
-    return this.artistRepo.save(artist);
+    const artist = this.db.artists.create(newArtist);
+    return this.db.artists.save(artist);
+
   }
 
   async updateOne(id: string, dto: ArtistDto) {
-    const artist = await this.artistRepo.findOne({where:{id}});
-    if (artist === undefined) {
+    const artist = await this.db.artists.findOne({where:{id}});
+    if (!artist) {
       return artist;
     }
     const updArtist = { ...artist, ...dto } as Artist;
-    return this.artistRepo.save(updArtist);
+    return this.db.artists.save(updArtist);
   }
 
   async deleteArtist(id: string) {
-    const artist = await this.artistRepo.findOne({where:{id}});
-    if (artist === undefined) {
+    const artist = await this.db.artists.findOne({where:{id}});
+    if (!artist) {
       return undefined;
     }
-    await this.artistRepo.delete(id)
+
+    const favArtInd = this.db.favorites.artists.findIndex((el) => el.id === id);
+    if (favArtInd !== -1) {
+      this.db.favorites.artists.splice(favArtInd, 1);
+    }
+
+    const albumInd = await this.db.albums.findOne({where:{artistId: id}});
+    if (albumInd) {
+      const obj = { ...albumInd, artistId: null } as AlbumsEntity;
+      await this.db.albums.save(obj)
+    }
+
+    const trackInd = await this.db.tracks.findOne({where:{artistId: id}});
+    if (trackInd) {
+      const obj = { ...trackInd, artistId: null } as Track;
+
+      await this.db.tracks.save(obj);
+    }
+    await this.db.artists.delete(id)
+    return true
   }
 }

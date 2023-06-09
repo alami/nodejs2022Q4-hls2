@@ -1,28 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/user-create.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
-import { User } from '../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { DbService } from '../models/db.service';
 import { Inject } from '@nestjs/common/decorators';
 import { UsersEntity } from './entities/users.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(DbService) private db: DbService,
-    @InjectRepository(UsersEntity)
-    private usersRepository: Repository<UsersEntity>,
   ) {}
 
   async getAll() {
-    return this.usersRepository.find();
+    return (await this.db.users.find()).map((el) => {
+      const { password, ...res } = el;
+      return res;
+    });
   }
 
   async getOneById(id: string) {
-    return this.usersRepository.findOneBy({ id });
+    const user = (await this.db.users.findOneBy({ id }));
+    if(!user) {
+      return undefined
+    }
+    const {password, ...res} = user;
+    return res;
   }
 
   async create(dto: CreateUserDto) {
@@ -35,13 +38,20 @@ export class UsersService {
       createdAt: now,
       updatedAt: now,
     } as UsersEntity;
-    const user = await this.usersRepository.create(newUser);
-    return this.usersRepository.save(user);
+    const user = this.db.users.create(newUser);
+    const userne = await this.db.users.save(user);
+    const { password, ...res } = newUser;
+
+    return {
+      ...res,
+      createdAt: +userne.createdAt,
+      updatedAt: +userne.updatedAt,
+    };
   }
 
   async updateOne(id: string, dto: UserUpdateDto) {
-    const user = await this.usersRepository.findOneBy({ id });
-    if (user === undefined) {
+    const user = await this.db.users.findOneBy({ id });
+    if (!user) {
       return undefined;
     }
     if (user.password !== dto.oldPassword) {
@@ -55,13 +65,21 @@ export class UsersService {
       createdAt: user.createdAt,
       updatedAt: new Date().getTime().toString(),
     } as UsersEntity;
+    const updedUser = await this.db.users.save(updUser);
+    const { password, ...res } = updedUser;
+    return {
+      ...res,
+      createdAt: +updedUser.createdAt,
+      updatedAt: +updedUser.updatedAt,
+    };
   }
 
   async deleteUser(id: string) {
-    const user = await this.usersRepository.findOneBy({ id });
-    if (user == undefined) {
+    const user = await this.db.users.findOneBy({ id });
+    if (!user) {
       return undefined;
     }
-    await this.usersRepository.delete(id);
+    await this.db.users.delete(id);
+    return true
   }
 }

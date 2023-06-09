@@ -17,14 +17,14 @@ export class FavaritesController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  gettracks() {
-    return this.favService.getAll();
+  async gettracks() {
+    return await this.favService.getAll();
   }
 
   /* POSTS OPERATIONS */
   @Post('track/:id')
   @HttpCode(HttpStatus.CREATED)
-  addTrackFavs(
+  async addTrackFavs(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -34,7 +34,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const track = this.favService.createTrackById(id);
+    const track = await this.favService.createTrackById(id);
     if (!track) {
       throw new HttpException(
         "trackId doesn't exist",
@@ -46,7 +46,7 @@ export class FavaritesController {
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteTrack(
+  async deleteTrack(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -56,7 +56,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const track = this.favService.deleteTrackById(id);
+    const track = await this.favService.deleteTrackById(id);
     if (!track) {
       throw new HttpException('trackId not found', HttpStatus.NOT_FOUND);
     }
@@ -66,7 +66,7 @@ export class FavaritesController {
   /* ALBUMS OPERATION */
   @Post('album/:id')
   @HttpCode(HttpStatus.CREATED)
-  addAlbumFavs(
+  async addAlbumFavs(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -76,7 +76,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const album = this.favService.createAlbumById(id);
+    const album = await this.favService.createAlbumById(id);
     if (!album) {
       throw new HttpException(
         "albumId doesn't exist",
@@ -88,7 +88,7 @@ export class FavaritesController {
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteAlbum(
+  async deleteAlbum(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -98,7 +98,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const album = this.favService.deleteAlbumById(id);
+    const album = await this.favService.deleteAlbumById(id);
     if (!album) {
       throw new HttpException('albumId not found', HttpStatus.NOT_FOUND);
     }
@@ -108,7 +108,7 @@ export class FavaritesController {
   /* ARTIST OPERATION */
   @Post('artist/:id')
   @HttpCode(HttpStatus.CREATED)
-  addArtistFavs(
+  async addArtistFavs(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -118,7 +118,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const artist = this.favService.createArtistById(id);
+    const artist = await this.favService.createArtistById(id);
     if (!artist) {
       throw new HttpException(
         "artistId doesn't exist",
@@ -130,7 +130,7 @@ export class FavaritesController {
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteArtist(
+  async deleteArtist(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -140,7 +140,7 @@ export class FavaritesController {
     )
     id: string,
   ) {
-    const artist = this.favService.deleteArtistById(id);
+    const artist = await this.favService.deleteArtistById(id);
     if (!artist) {
       throw new HttpException('artistId not found', HttpStatus.NOT_FOUND);
     }

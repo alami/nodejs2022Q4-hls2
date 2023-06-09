@@ -1,3 +1,8 @@
+import { Repository } from 'typeorm';
+import { AlbumsEntity } from 'src/albums/entities/album.entity';
+import { ArtistsEntity } from 'src/artist/entities/artists.entity';
+import { TracksEntity } from 'src/track/entities/tracks.entity';
+
 export interface User {
   id: string; // uuid v4
   login: string;
@@ -42,4 +47,10 @@ export interface Favarite {
   artists: Artist[]; // favorite artists ids
   albums: Album[]; // favorite albums ids
   tracks: Track[]; // favorite tracks ids
+}
+
+export interface FavRepoInterface {
+  artists: Repository<ArtistsEntity>;
+  albums: Repository<AlbumsEntity>;
+  tracks: Repository<TracksEntity>;
 }

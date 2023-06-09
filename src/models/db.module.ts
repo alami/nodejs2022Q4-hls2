@@ -9,7 +9,12 @@ import { UsersEntity } from 'src/users/entities/users.entity';
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AlbumsEntity, ArtistsEntity, TracksEntity, UsersEntity])
+    TypeOrmModule.forFeature([
+      AlbumsEntity,
+      ArtistsEntity,
+      TracksEntity,
+      UsersEntity,
+    ]),
   ],
   controllers: [],
   providers: [DbService],

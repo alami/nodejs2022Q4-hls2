@@ -21,13 +21,13 @@ export class ArtistsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getartists() {
-    return this.artistsService.getAll();
+  async getartists() {
+    return await this.artistsService.getAll();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getartist(
+  async getartist(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -37,8 +37,8 @@ export class ArtistsController {
     )
     id: string,
   ) {
-    const artist = this.artistsService.getOneById(id);
-    if (artist === undefined) {
+    const artist = await this.artistsService.getOneById(id);
+    if (!artist) {
       throw new NotFoundException();
     }
     return artist;
@@ -48,7 +48,7 @@ export class ArtistsController {
   @HttpCode(HttpStatus.CREATED)
   async createartist(@Body(new ValidationPipe()) createartistDto: ArtistDto) {
     const art = await this.artistsService.create(createartistDto);
-    if (!art) {
+    if (art === undefined) {
       throw new NotFoundException();
     }
     return art;
@@ -56,18 +56,18 @@ export class ArtistsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  updateartist(
+  async updateartist(
     @Body(new ValidationPipe()) artistDto: ArtistDto,
     @Param(
-      'id',
-      new ParseUUIDPipe({
-        errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        version: '4',
-      }),
+        'id',
+        new ParseUUIDPipe({
+          errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+          version: '4',
+        }),
     )
-    id: string,
+        id: string,
   ) {
-    const artist = this.artistsService.updateOne(id, artistDto);
+    const artist = await this.artistsService.updateOne(id, artistDto);
     if (artist === undefined) {
       throw new NotFoundException();
     }
@@ -76,7 +76,7 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteartist(
+  async deleteartist(
     @Param(
       'id',
       new ParseUUIDPipe({
@@ -86,8 +86,8 @@ export class ArtistsController {
     )
     id: string,
   ) {
-    const art = this.artistsService.deleteArtist(id);
-    if (art === undefined) {
+    const art = await this.artistsService.deleteArtist(id);
+    if (!art) {
       throw new NotFoundException();
     }
     return art;
