@@ -10,6 +10,9 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { DbModule } from './models/db.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersEntity } from './users/entities/users.entity';
+import { TracksEntity } from './track/entities/tracks.entity';
+import { AlbumsEntity } from './albums/entities/album.entity';
+import { ArtistsEntity } from './artist/entities/artists.entity';
 
 @Module({
   imports: [
@@ -23,11 +26,11 @@ import { UsersEntity } from './users/entities/users.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'postgres',
-      port: 5432,
-      username: 'admin',
-      password: 'q1w2e3r4',
-      database: 'hls_postgres',
-      entities: [UsersEntity],
+      port: Number(process.env.POSTGRES_DEFAULT_PORT),
+      username: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PW,
+      database: process.env.POSTGRES_DB,
+      entities: [UsersEntity, TracksEntity, AlbumsEntity, ArtistsEntity],
       synchronize: true,
       autoLoadEntities: true,
     }),
